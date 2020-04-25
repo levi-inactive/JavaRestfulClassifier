@@ -6,6 +6,8 @@ import mx.tec.rest.model.ClassifierResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
 public class ClassifierService implements IClassifierService {
     private static Logger log = LoggerFactory.getLogger(RandomTreeBinClassifier.class);
 
@@ -18,7 +20,18 @@ public class ClassifierService implements IClassifierService {
         switch (requestedClassifier) {
             case "randomtree":
                 RandomTreeBinClassifier classifier = new RandomTreeBinClassifier();
-                classifier.Load("/models/randomTree.appddos.model");
+
+                boolean exists = new File("models/randomTree.appddos.model").exists();
+                if (!exists) {
+                    response = new ClassifierResponse(
+                        "error",
+                        -1,
+                        "Model file does not exist."
+                    );
+                    break;
+                }
+
+                classifier.Load("models/randomTree.appddos.model");
                 int classEnumeration = classifier.Classify(request.getFlow());
                 response = getClassString(classEnumeration);
                 break;

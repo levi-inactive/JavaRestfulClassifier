@@ -9,6 +9,7 @@ import weka.classifiers.trees.RandomTree;
 import weka.core.Attribute;
 import weka.core.DenseInstance;
 import weka.core.Instance;
+import weka.core.Instances;
 
 import java.util.ArrayList;
 
@@ -162,52 +163,109 @@ public class RandomTreeBinClassifier extends Classifier {
             /**
              * Create 39 empty attributes.
              */
+            ArrayList<Attribute> attributeList = new ArrayList<>();
+
             Attribute total_fpackets = new Attribute("total_fpackets");
+            attributeList.add(total_fpackets);
             Attribute total_fvolume = new Attribute("total_fvolume");
+            attributeList.add(total_fvolume);
             Attribute total_bpackets = new Attribute("total_bpackets");
+            attributeList.add(total_bpackets);
             Attribute total_bvolume = new Attribute("total_bvolume");
+            attributeList.add(total_bvolume);
             Attribute min_fpktl = new Attribute("min_fpktl");
+            attributeList.add(min_fpktl);
             Attribute mean_fpktl = new Attribute("mean_fpktl");
+            attributeList.add(mean_fpktl);
             Attribute max_fpktl = new Attribute("max_fpktl");
+            attributeList.add(max_fpktl);
             Attribute std_fpktl = new Attribute("std_fpktl");
+            attributeList.add(std_fpktl);
             Attribute min_bpktl = new Attribute("min_bpktl");
+            attributeList.add(min_bpktl);
             Attribute mean_bpktl = new Attribute("mean_bpktl");
+            attributeList.add(mean_bpktl);
             Attribute max_bpktl = new Attribute("max_bpktl");
+            attributeList.add(max_bpktl);
             Attribute std_bpktl = new Attribute("std_bpktl");
+            attributeList.add(std_bpktl);
             Attribute min_fiat = new Attribute("min_fiat");
+            attributeList.add(min_fiat);
             Attribute mean_fiat = new Attribute("mean_fiat");
+            attributeList.add(mean_fiat);
             Attribute max_fiat = new Attribute("max_fiat");
+            attributeList.add(max_fiat);
             Attribute std_fiat = new Attribute("std_fiat");
+            attributeList.add(std_fiat);
             Attribute min_biat = new Attribute("min_biat");
+            attributeList.add(min_biat);
             Attribute mean_biat = new Attribute("mean_biat");
+            attributeList.add(mean_biat);
             Attribute max_biat = new Attribute("max_biat");
+            attributeList.add(max_biat);
             Attribute std_biat = new Attribute("std_biat");
+            attributeList.add(std_biat);
             Attribute duration = new Attribute("duration");
+            attributeList.add(duration);
             Attribute min_active = new Attribute("min_active");
+            attributeList.add(min_active);
             Attribute mean_active = new Attribute("mean_active");
+            attributeList.add(mean_active);
             Attribute max_active = new Attribute("max_active");
+            attributeList.add(max_active);
             Attribute std_active = new Attribute("std_active");
+            attributeList.add(std_active);
             Attribute min_idle = new Attribute("min_idle");
+            attributeList.add(min_idle);
             Attribute mean_idle = new Attribute("mean_idle");
+            attributeList.add(mean_idle);
             Attribute max_idle = new Attribute("max_idle");
+            attributeList.add(max_idle);
             Attribute std_idle = new Attribute("std_idle");
+            attributeList.add(std_idle);
             Attribute sflow_fpackets = new Attribute("sflow_fpackets");
+            attributeList.add(sflow_fpackets);
             Attribute sflow_fbytes = new Attribute("sflow_fbytes");
+            attributeList.add(sflow_fbytes);
             Attribute sflow_bpackets = new Attribute("sflow_bpackets");
+            attributeList.add(sflow_bpackets);
             Attribute sflow_bbytes = new Attribute("sflow_bbytes");
+            attributeList.add(sflow_bbytes);
             Attribute fpsh_cnt = new Attribute("fpsh_cnt");
+            attributeList.add(fpsh_cnt);
             Attribute bpsh_cnt = new Attribute("bpsh_cnt");
+            attributeList.add(bpsh_cnt);
             Attribute furg_cnt = new Attribute("furg_cnt");
+            attributeList.add(furg_cnt);
             Attribute total_fhlen = new Attribute("total_fhlen");
+            attributeList.add(total_fhlen);
             Attribute total_bhlen = new Attribute("total_bhlen");
+            attributeList.add(total_bhlen);
+
+            ArrayList<String> classVal = new ArrayList<>();
+            classVal.add("normal");
+            classVal.add("slowbody2");
+            classVal.add("slowread");
+            classVal.add("ddossim");
+            classVal.add("slowheaders");
+            classVal.add("goldeneye");
+            classVal.add("rudy");
+            classVal.add("hulk");
+            classVal.add("slowloris");
+
+            attributeList.add(new Attribute("@@class@@", classVal));
+
+            Instances tmpInstances = new Instances("TmpInstances", attributeList, 0);
+            tmpInstances.setClassIndex(tmpInstances.numAttributes() - 1);
 
             /**
              * Create empty instance that sets weight to one,
              * all values to be missing, and the reference to
              * the dataset to null.
              */
-            Instance instance = new DenseInstance(40);
-            instance.setClassMissing();
+            Instance instance = new DenseInstance(tmpInstances.numAttributes());
+            tmpInstances.add(instance);
+            instance.setDataset(tmpInstances);
 
             instance.setValue(total_fpackets, f.getTotal_fpackets());
             instance.setValue(total_fvolume, f.getTotal_fvolume());
@@ -248,6 +306,7 @@ public class RandomTreeBinClassifier extends Classifier {
             instance.setValue(furg_cnt, f.getFurg_cnt());
             instance.setValue(total_fhlen, f.getTotal_fhlen());
             instance.setValue(total_bhlen, f.getTotal_bhlen());
+            instance.setClassMissing();
 
             return instance;
         } catch (Exception e) {
