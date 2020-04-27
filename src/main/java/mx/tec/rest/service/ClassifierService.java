@@ -1,12 +1,15 @@
 package mx.tec.rest.service;
 
+import mx.tec.rest.classifiers.classifier.Classifier;
 import mx.tec.rest.classifiers.trees.randomtree.RandomTreeBinClassifier;
 import mx.tec.rest.model.ClassifierRequest;
 import mx.tec.rest.model.ClassifierResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
+import javax.print.attribute.standard.Finishings;
+import java.io.*;
+import java.net.URL;
 
 public class ClassifierService implements IClassifierService {
     private static Logger log = LoggerFactory.getLogger(RandomTreeBinClassifier.class);
@@ -21,8 +24,22 @@ public class ClassifierService implements IClassifierService {
             case "randomtree":
                 RandomTreeBinClassifier classifier = new RandomTreeBinClassifier();
 
+                URL resource = ClassifierService.class.getClassLoader().getResource("models/randomTree.appddos.model");
+                /*log.info("URL: "+resource);
+                final InputStream inputStream;
+                try {
+                    inputStream = resource.openStream();
+                    final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                    final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                    String s="";
+                    while ( (s=bufferedReader.readLine())!=null){
+                        System.out.println(s);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
                 boolean exists = new File("models/randomTree.appddos.model").exists();
-                if (!exists) {
+                if (!exists && resource==null) {
                     response = new ClassifierResponse(
                         "error",
                         -1,

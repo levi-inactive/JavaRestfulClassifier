@@ -237,6 +237,8 @@ public class RandomTreeBinClassifier extends Classifier {
             attributeList.add(bpsh_cnt);
             Attribute furg_cnt = new Attribute("furg_cnt");
             attributeList.add(furg_cnt);
+            Attribute burg_cnt = new Attribute("burg_cnt");
+            attributeList.add(burg_cnt);
             Attribute total_fhlen = new Attribute("total_fhlen");
             attributeList.add(total_fhlen);
             Attribute total_bhlen = new Attribute("total_bhlen");
@@ -304,16 +306,16 @@ public class RandomTreeBinClassifier extends Classifier {
             instance.setValue(fpsh_cnt, f.getFpsh_cnt());
             instance.setValue(bpsh_cnt, f.getBpsh_cnt());
             instance.setValue(furg_cnt, f.getFurg_cnt());
+            instance.setValue(burg_cnt, f.getBurg_cnt());
             instance.setValue(total_fhlen, f.getTotal_fhlen());
             instance.setValue(total_bhlen, f.getTotal_bhlen());
             instance.setClassMissing();
 
             return instance;
         } catch (Exception e) {
-            log.error("Exception thrown at buildInstance()");
-            log.error(e.getMessage());
+            log.error("Error en build instance");
+            e.printStackTrace();
+            return null;
         }
-
-        return null;
     }
 }
