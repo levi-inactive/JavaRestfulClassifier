@@ -33,7 +33,7 @@ public class ClassifierService implements IClassifierService {
         switch (requestedClassifier) {
             case "randomtree":
                 classifier = new RandomTreeBinClassifier();
-                modelPath = "models/randomtree.appddos.model";
+                modelPath = "models/randomTree.appddos.model";
 
                 if (!verifyModelExists(modelPath)) {
                     response = noModelResponse;
