@@ -13,7 +13,7 @@ public class Directory {
     @Path("/classify")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public ClassifierResponse classify(@WebParam ClassifierRequest request) {
-        return new ClassifierService().classifyFlow(request);
+    public int classify(@WebParam ClassifierRequest request) {
+        return new ClassifierService().classifyFlow(request).getClassEnumeration();
     }
 }
