@@ -1,18 +1,25 @@
 package mx.tec.rest.service;
 
-import mx.tec.rest.classifiers.classifier.Classifier;
+import mx.tec.rest.classifiers.Classifier;
+import mx.tec.rest.classifiers.trees.j48.J48BinClassifier;
 import mx.tec.rest.classifiers.trees.randomtree.RandomTreeBinClassifier;
+import mx.tec.rest.classifiers.trees.reptree.REPTreeBinClassifier;
 import mx.tec.rest.model.ClassifierRequest;
 import mx.tec.rest.model.ClassifierResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.print.attribute.standard.Finishings;
 import java.io.*;
 import java.net.URL;
 
 public class ClassifierService implements IClassifierService {
     private static Logger log = LoggerFactory.getLogger(RandomTreeBinClassifier.class);
+
+    private ClassifierResponse noModelResponse = new ClassifierResponse(
+        "error",
+        -1,
+        "Model file does not exist."
+    );
 
     @Override
     public ClassifierResponse classifyFlow(ClassifierRequest request) {
@@ -20,36 +27,47 @@ public class ClassifierService implements IClassifierService {
         String requestedClassifier = request.getClassifier();
         log.info("Requested classifier: " + requestedClassifier);
 
+        Classifier classifier;
+        String modelPath;
+        int classEnumeration;
         switch (requestedClassifier) {
             case "randomtree":
-                RandomTreeBinClassifier classifier = new RandomTreeBinClassifier();
+                classifier = new RandomTreeBinClassifier();
+                modelPath = "models/randomtree.appddos.model";
 
-                URL resource = ClassifierService.class.getClassLoader().getResource("models/randomTree.appddos.model");
-                /*log.info("URL: "+resource);
-                final InputStream inputStream;
-                try {
-                    inputStream = resource.openStream();
-                    final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                    final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                    String s="";
-                    while ( (s=bufferedReader.readLine())!=null){
-                        System.out.println(s);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }*/
-                boolean exists = new File("models/randomTree.appddos.model").exists();
-                if (!exists && resource==null) {
-                    response = new ClassifierResponse(
-                        "error",
-                        -1,
-                        "Model file does not exist."
-                    );
+                if (verifyModelExists(modelPath)) {
+                    response = noModelResponse;
                     break;
                 }
 
-                classifier.Load("models/randomTree.appddos.model");
-                int classEnumeration = classifier.Classify(request.getFlow());
+                classifier.load(modelPath);
+                classEnumeration = classifier.classify(request.getFlow());
+                response = getClassString(classEnumeration);
+                break;
+            case "reptree":
+                classifier = new REPTreeBinClassifier();
+                modelPath = "models/reptree.appddos.model";
+
+                if (verifyModelExists(modelPath)) {
+                    response = noModelResponse;
+                    break;
+                }
+
+                classifier.load(modelPath);
+                classEnumeration = classifier.classify(request.getFlow());
+                response = getClassString(classEnumeration);
+                break;
+            case "j48":
+                classifier = new J48BinClassifier();
+                modelPath = "models/j48.appddos.model";
+
+                if (verifyModelExists(modelPath)) {
+                    response = noModelResponse;
+                    break;
+                }
+
+                classifier.load(modelPath);
+                classEnumeration = classifier.classify(request.getFlow());
                 response = getClassString(classEnumeration);
                 break;
             default:
@@ -61,6 +79,21 @@ public class ClassifierService implements IClassifierService {
         }
 
         return response;
+    }
+
+    private boolean verifyModelExists(String modelPath) {
+        URL resource = ClassifierService
+            .class
+            .getClassLoader()
+            .getResource(modelPath);
+
+        boolean exists = new File(modelPath).exists();
+
+        if (!exists && resource == null) {
+            return false;
+        }
+
+        return true;
     }
 
     private ClassifierResponse getClassString(int classEnumeration) {
