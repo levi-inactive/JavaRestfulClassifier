@@ -35,7 +35,7 @@ public class ClassifierService implements IClassifierService {
                 classifier = new RandomTreeBinClassifier();
                 modelPath = "models/randomtree.appddos.model";
 
-                if (verifyModelExists(modelPath)) {
+                if (!verifyModelExists(modelPath)) {
                     response = noModelResponse;
                     break;
                 }
@@ -48,7 +48,7 @@ public class ClassifierService implements IClassifierService {
                 classifier = new REPTreeBinClassifier();
                 modelPath = "models/reptree.appddos.model";
 
-                if (verifyModelExists(modelPath)) {
+                if (!verifyModelExists(modelPath)) {
                     response = noModelResponse;
                     break;
                 }
@@ -61,7 +61,7 @@ public class ClassifierService implements IClassifierService {
                 classifier = new J48BinClassifier();
                 modelPath = "models/j48.appddos.model";
 
-                if (verifyModelExists(modelPath)) {
+                if (!verifyModelExists(modelPath)) {
                     response = noModelResponse;
                     break;
                 }
