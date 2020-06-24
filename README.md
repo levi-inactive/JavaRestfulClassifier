@@ -68,7 +68,6 @@ Any additional attributes are ignored.
 
 ```json
 {
-    "message": "Flow classified", 
-    "flow_class": "asdf"
+    constInteger
 }
 ```
